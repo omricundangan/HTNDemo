@@ -23,7 +23,7 @@ public class EnemyAgentPlanner : MonoBehaviour {
         ctrlr = GetComponent<EnemyAgentController>();
         TasksToProcess = new Stack<Task>();
         FinalPlan = new Stack<Task>();
-        CurrentWorldState = new WorldState(2, false, false, true);
+        CurrentWorldState = new WorldState(2, false, false, false);
 
         CreateHTN();
 	}
@@ -32,8 +32,8 @@ public class EnemyAgentPlanner : MonoBehaviour {
     {
         // Create HTN
         taskRoot = new Task(TASKS.RootTask, TYPE.Compound);
-        taskRoot.effects = CurrentWorldState;
         taskUseTeleport = new Task(TASKS.Teleport, TYPE.Primitive);
+ //      taskUseTeleport.effects = new WorldState(CurrentWorldState.numTeleports--, CurrentWorldState.enemyNear, CurrentWorldState.playerNear, CurrentWorldState.isHidden);
         taskAvoid = new Task(TASKS.Avoid, TYPE.Compound);
         taskIdle = new Task(TASKS.Idle, TYPE.Primitive);
         taskHide = new Task(TASKS.Hide, TYPE.Primitive);
@@ -62,10 +62,6 @@ public class EnemyAgentPlanner : MonoBehaviour {
         taskAvoid.methods.Add(avoidm0);
         taskAvoid.methods.Add(avoidm1);
     }
-	
-	void Update () {
-		
-	}
 
     public void MakePlan()
     {
@@ -74,7 +70,6 @@ public class EnemyAgentPlanner : MonoBehaviour {
         while(TasksToProcess.Count != 0)
         {
             Task CurrentTask = TasksToProcess.Pop();
-            print("Current task: " + CurrentTask.task);
             if(CurrentTask.type == TYPE.Compound)
             {
                 Method SatisfiedMethod = CurrentTask.FindSatisfiedMethod(WorkingWS);
@@ -112,6 +107,7 @@ public class EnemyAgentPlanner : MonoBehaviour {
                 }
             }
         }
+
         ExecutePlan();
     }
 
@@ -121,11 +117,14 @@ public class EnemyAgentPlanner : MonoBehaviour {
         switch (CurrentTask.task)
         {
             case TASKS.Teleport:
-                if(ws.numTeleports > 0 && ws.playerNear || ws.enemyNear)
+                if ((ws.numTeleports > 0) && (ws.playerNear || ws.enemyNear))
                 {
                     return true;
                 }
-                return false;
+                else
+                {
+                    return false;
+                }
             case TASKS.Idle:
                 if(ws.enemyNear && ws.isHidden)
                 {
@@ -139,11 +138,10 @@ public class EnemyAgentPlanner : MonoBehaviour {
                 }
                 return false;
             case TASKS.GetItem:
-                if (!ws.playerNear) // do we need this? or if(true) instead?
+                if (true) // do we need this? or if(true) instead?
                 {
                     return true;
                 }
-                return false;
             default:
                 return false;
         }
@@ -161,7 +159,6 @@ public class EnemyAgentPlanner : MonoBehaviour {
         while(fixedFinalStack.Count != 0)
         {
             Task n = fixedFinalStack.Pop();
-            print("Final stack pop: " + n.task);
             EvaluateTask(n);
         }
     }
@@ -194,7 +191,7 @@ public class EnemyAgentPlanner : MonoBehaviour {
             switch (m.methodNum)
             {
                 case 0: 
-                    if (ws.numTeleports > 0 && ws.playerNear || ws.enemyNear)
+                    if ((ws.numTeleports > 0) && (ws.playerNear || ws.enemyNear))
                     {
                         return true;
                     }
@@ -292,7 +289,7 @@ public enum TYPE
 
 public class WorldState
 {
-    public int numTeleports = 2;
+    public int numTeleports;
     public bool enemyNear;
     public bool playerNear;
     public bool isHidden = true;
@@ -304,12 +301,27 @@ public class WorldState
         playerNear = p;
         isHidden = h;
     }
-
-    public void ApplyEffects(WorldState effects)
+    public void ApplyEffects(WorldState effects)    // i havent found a use for this yet
     {
         this.numTeleports = effects.numTeleports;
         this.enemyNear = effects.enemyNear;
         this.playerNear = effects.playerNear;
         this.isHidden = effects.isHidden;
+    }
+    public void setNumTeleports(int n)
+    {
+        numTeleports = n;
+    }
+    public void setEnemyNear(bool b)
+    {
+        enemyNear = b;
+    }
+    public void setPlayerNear(bool b)
+    {
+        playerNear = b;
+    }
+    public void setIsHidden(bool b)
+    {
+        isHidden = b;
     }
 }

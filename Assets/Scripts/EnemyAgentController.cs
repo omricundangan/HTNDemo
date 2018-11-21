@@ -35,42 +35,69 @@ public class EnemyAgentController : MonoBehaviour {
 
     private void Update()
     {
-        Vector3 diff = FindClosestEnemy().transform.position - transform.position;
-        float enemyDist = diff.sqrMagnitude;
-        Vector3 diff2 = FindAgent().transform.position - transform.position;
-        float playerDist = diff.sqrMagnitude;
+        UpdateWorldState();
 
-//        planner.CurrentWorldState = new WorldState(numTeleportTraps, enemyDist, playerDist, isHiding);
-        if (!planner.planning)
-        {
-            planner.MakePlan();
-        }
+        planner.MakePlan();
     }
 
+    void UpdateWorldState()
+    {
+        planner.CurrentWorldState.setNumTeleports(numTeleportTraps);
 
+        float playerDist = -1;
+
+        Vector3 diff = FindClosestEnemy().transform.position - transform.position;
+        float enemyDist = diff.sqrMagnitude;
+        if (FindAgent() != null)    // in case Player gets removed from game
+        {
+            Vector3 diff2 = FindAgent().transform.position - transform.position;
+            playerDist = diff2.sqrMagnitude;
+        }
+
+        if (playerDist < teleDistance && playerDist != -1)
+        {
+            planner.CurrentWorldState.setPlayerNear(true);
+        }
+        else if (playerDist >= teleDistance || playerDist == -1)
+        {
+            planner.CurrentWorldState.setPlayerNear(false);
+        }
+        if (enemyDist < teleDistance)
+        {
+            planner.CurrentWorldState.setEnemyNear(true);
+        }
+        else if (enemyDist >= teleDistance)
+        {
+            planner.CurrentWorldState.setEnemyNear(false);
+        }
+
+        if(transform.position == GetBestHidingSpot().transform.position)
+        {
+            planner.CurrentWorldState.isHidden = true;
+        }
+        else
+        {
+            planner.CurrentWorldState.isHidden = false;
+        }
+    }
     
-    // NOT USED. Obsolete
+    // NOT USED. Obsolete!!!
     void primitiveAI() {
         if (!frozen)
         {
             Vector3 diff = FindClosestEnemy().transform.position - transform.position;
             float enemyDist = diff.sqrMagnitude;
-            print(enemyDist);
             if (enemyDist < 150)
             {
-                print("enemy too close!");
                 GoToBestHidingSpot();
             }
             else
             {
-               // print("enemy is far enough!");
                 GoToClosestItem();
             }
-            // print(agent.destination);
         }
     }
     
-
     public void IncrementNumItems()
     {
         numItems++;
@@ -123,7 +150,7 @@ public class EnemyAgentController : MonoBehaviour {
             closestEnemy.GetComponent<EnemyController>().respawning = true;
             closestEnemy.GetComponent<EnemyController>().Respawn();
         }
-        else
+        else if(closestAgent)
         {
             gameMgr.OverlayText("Your opponent teleported you!", 3);
             closestAgent.GetComponent<PlayerController2>().Respawn();
@@ -174,8 +201,6 @@ public class EnemyAgentController : MonoBehaviour {
                 }
             }
         }
-
-       // print("Closest item: " + closest);
         return closest;
     }
 
@@ -194,7 +219,6 @@ public class EnemyAgentController : MonoBehaviour {
                 distance = curDistance;
             }
         }
-        print("Closest alcove: " + closest);
         return closest;
     }
 
@@ -225,30 +249,14 @@ public class EnemyAgentController : MonoBehaviour {
         Vector3 diffEnemy = closest.transform.position - closestPt;
         Vector3 diffAgent = closest.transform.position - position;
 
-        /*
-        print("Enemy: "+ closestPt);
-        print("Agent: "+ position);
-        print("Alcove: "+ closest.transform.position);
-        print("dist between enemy = " + diffEnemy.sqrMagnitude);
-
-        print(diffEnemy.sqrMagnitude);
-        print(diffAgent.sqrMagnitude);
-
-        enemy.GetComponent<EnemyController>().forwardSpeed = 0;
-        frozen = true;
-        agent.destination = position;
-        */
-
         // If the agent is closer to the closest alcove than the enemy, this is the best alcove
         // Or, if the closest spot is the edge spot, this is the best spot
         if ((closest == gameMgr.spawner.leftSpot || closest == gameMgr.spawner.rightSpot) || diffAgent.sqrMagnitude < diffEnemy.sqrMagnitude)
         {
-            print("Agent is closer");
             return closest;
         }
         else // otherwise, the best alcove is the second closest alcove to the agent
         {
-            print("Enemy is closer");
             return second;
         }
     }
