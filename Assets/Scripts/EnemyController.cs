@@ -9,6 +9,7 @@ public class EnemyController : MonoBehaviour {
     public float forwardSpeed = 5;
     private bool visionState = true;
     public bool respawning = true;
+    public bool isMovingRight = true;
     public GameObject vision;
 
     // Use this for initialization
@@ -34,19 +35,21 @@ public class EnemyController : MonoBehaviour {
         if (rng1 == 1)
         {
             transform.eulerAngles = new Vector3(0, 180, 0);
+            isMovingRight = false;
         }
         else
         {
             transform.eulerAngles = new Vector3(0, 0, 0);
+            isMovingRight = true;
         }
         transform.position = doorways[rng1].transform.position;
-        
     }
 
     // chance of being called when entering an obstacle
     public void ReverseDirection()
     {
         transform.Rotate(new Vector3(0, 180, 0));
+        isMovingRight = !isMovingRight;
     }
 
     // called when entering and exiting an obstacle

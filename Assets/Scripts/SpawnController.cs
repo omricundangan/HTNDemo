@@ -10,6 +10,9 @@ public class SpawnController : MonoBehaviour {
     public GameObject[] agentSpawnPoints = new GameObject[10];
     public GameObject[] enemySpawnPoint1 = new GameObject[2];
     public GameObject[] enemySpawnPoint2 = new GameObject[2];
+    public GameObject leftSpot;
+    public GameObject rightSpot;
+
     public GameObject gsm;
 
     public GameObject enemy1;
@@ -75,6 +78,7 @@ public class SpawnController : MonoBehaviour {
         if(rng1 == 1)
         {
             enemy1.transform.eulerAngles = new Vector3(0, 180, 0);
+            enemy1.GetComponent<EnemyController>().isMovingRight = false;
         }
         for(int i = 0; i <enemySpawnPoint1.Length; i++)
         {
@@ -87,6 +91,7 @@ public class SpawnController : MonoBehaviour {
         if (rng2 == 1)
         {
             enemy2.transform.eulerAngles = new Vector3(0, 180, 0);
+            enemy2.GetComponent<EnemyController>().isMovingRight = false;
         }
         for (int i = 0; i < enemySpawnPoint2.Length; i++)
         {

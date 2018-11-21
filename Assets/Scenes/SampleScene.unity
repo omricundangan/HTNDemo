@@ -2020,6 +2020,34 @@ Transform:
   m_Father: {fileID: 1715420513}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &854049618
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 854049619}
+  m_Layer: 0
+  m_Name: Edge Spot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &854049619
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 854049618}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 19.5, y: 0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1533966491}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &922211301
 Prefab:
   m_ObjectHideFlags: 0
@@ -2430,6 +2458,8 @@ MonoBehaviour:
   enemySpawnPoint2:
   - {fileID: 1554937625}
   - {fileID: 1494555574}
+  leftSpot: {fileID: 1544889643}
+  rightSpot: {fileID: 854049618}
   gsm: {fileID: 1751314194}
   enemy1: {fileID: 0}
   enemy2: {fileID: 0}
@@ -2870,6 +2900,8 @@ Transform:
   - {fileID: 1715420513}
   - {fileID: 513676941}
   - {fileID: 849041434}
+  - {fileID: 1544889644}
+  - {fileID: 854049619}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2878,6 +2910,34 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4504153252175334, guid: c3c4b86c719240941a6fc4e60bd9a0dc,
     type: 2}
   m_PrefabInternal: {fileID: 1896153178}
+--- !u!1 &1544889643
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1544889644}
+  m_Layer: 0
+  m_Name: Edge
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1544889644
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1544889643}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -19.5, y: 0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1533966491}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1554937625 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1533488045234024, guid: 2cd42bcc73bf12a448aebaf527151e2f,

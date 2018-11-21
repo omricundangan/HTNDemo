@@ -31,7 +31,7 @@ public class PlayerController2 : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.G))
         {
-            gameMgr.agent2.GetComponent<EnemyAgentController>().GetBestAlcove();
+            gameMgr.agent2.GetComponent<EnemyAgentController>().GetBestHidingSpot();
         }
     }
 

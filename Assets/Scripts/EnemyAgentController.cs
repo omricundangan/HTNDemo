@@ -11,7 +11,7 @@ public class EnemyAgentController : MonoBehaviour {
     public int numTeleportTraps = 2;
 
     public GameObject[] itemsRemaining;
-    public GameObject[] alcoves;
+    public GameObject[] hidingSpots;
     public NavMeshAgent agent;
     private bool frozen = false;
     
@@ -19,13 +19,32 @@ public class EnemyAgentController : MonoBehaviour {
 	void Start () {
         agent = GetComponent<NavMeshAgent>();
         itemsRemaining = gameMgr.items;
+        hidingSpots = new GameObject[12];
+        for(int i = 0; i < gameMgr.alcoves.Length; i++)
+        {
+            hidingSpots[i] = gameMgr.alcoves[i];
+        }
+        hidingSpots[10] = gameMgr.spawner.leftSpot;
+        hidingSpots[11] = gameMgr.spawner.rightSpot;
     }
 
     // Update is called once per frame
     void Update () {
         if (!frozen)
         {
-            GoToClosestItem();
+            Vector3 diff = FindClosestEnemy().transform.position - transform.position;
+            float enemyDist = diff.sqrMagnitude;
+            print(enemyDist);
+            if (enemyDist < 150)
+            {
+                print("enemy too close!");
+                GoToBestHidingSpot();
+            }
+            else
+            {
+               // print("enemy is far enough!");
+                GoToClosestItem();
+            }
             // print(agent.destination);
         }
     }
@@ -143,13 +162,13 @@ public class EnemyAgentController : MonoBehaviour {
         GameObject closest = null;
         float distance = Mathf.Infinity;
         Vector3 position = transform.position;
-        for (int i = 0; i < gameMgr.alcoves.Length; i++)
+        for (int i = 0; i < hidingSpots.Length; i++)
         {
-            Vector3 diff = gameMgr.alcoves[i].transform.position - position;
+            Vector3 diff = hidingSpots[i].transform.position - position;
             float curDistance = diff.sqrMagnitude;
             if (curDistance < distance)
             {
-                closest = gameMgr.alcoves[i];
+                closest = hidingSpots[i];
                 distance = curDistance;
             }
         }
@@ -157,20 +176,20 @@ public class EnemyAgentController : MonoBehaviour {
         return closest;
     }
 
-    public GameObject GetBestAlcove()
+    public GameObject GetBestHidingSpot()
     {
         GameObject closest = null;
         GameObject second = null;
         float distance = Mathf.Infinity;
         Vector3 position = transform.position;
-        for (int i = 0; i < gameMgr.alcoves.Length; i++)
+        for (int i = 0; i < hidingSpots.Length; i++)
         {
-            Vector3 diff = gameMgr.alcoves[i].transform.position - position;
+            Vector3 diff = hidingSpots[i].transform.position - position;
             float curDistance = diff.sqrMagnitude;
             if (curDistance < distance)
             {
                 second = closest;
-                closest = gameMgr.alcoves[i];
+                closest = hidingSpots[i];
                 distance = curDistance;
             }
         }
@@ -184,9 +203,11 @@ public class EnemyAgentController : MonoBehaviour {
         Vector3 diffEnemy = closest.transform.position - closestPt;
         Vector3 diffAgent = closest.transform.position - position;
 
+        /*
         print("Enemy: "+ closestPt);
         print("Agent: "+ position);
         print("Alcove: "+ closest.transform.position);
+        print("dist between enemy = " + diffEnemy.sqrMagnitude);
 
         print(diffEnemy.sqrMagnitude);
         print(diffAgent.sqrMagnitude);
@@ -194,9 +215,11 @@ public class EnemyAgentController : MonoBehaviour {
         enemy.GetComponent<EnemyController>().forwardSpeed = 0;
         frozen = true;
         agent.destination = position;
+        */
 
         // If the agent is closer to the closest alcove than the enemy, this is the best alcove
-        if(diffAgent.sqrMagnitude < diffEnemy.sqrMagnitude)
+        // Or, if the closest spot is the edge spot, this is the best spot
+        if ((closest == gameMgr.spawner.leftSpot || closest == gameMgr.spawner.rightSpot) || diffAgent.sqrMagnitude < diffEnemy.sqrMagnitude)
         {
             print("Agent is closer");
             return closest;
@@ -218,8 +241,8 @@ public class EnemyAgentController : MonoBehaviour {
         agent.destination = GetClosestItem().transform.position;
     }
 
-    public void GoToBestAlcove()
+    public void GoToBestHidingSpot()
     {
-        agent.destination = GetBestAlcove().transform.position;
+        agent.destination = GetBestHidingSpot().transform.position;
     }
 }
