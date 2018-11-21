@@ -9,6 +9,8 @@ public class EnemyAgentController : MonoBehaviour {
     private int numItems = 0;
     public bool isAlive = true;
     public int numTeleportTraps = 2;
+    public float teleDistance = 150;
+    public bool isHiding = true;
 
     public GameObject[] itemsRemaining;
     public GameObject[] hidingSpots;
@@ -27,18 +29,28 @@ public class EnemyAgentController : MonoBehaviour {
         }
         hidingSpots[10] = gameMgr.spawner.leftSpot;
         hidingSpots[11] = gameMgr.spawner.rightSpot;
-        planner = new EnemyAgentPlanner();
+        planner = GetComponent<EnemyAgentPlanner>();
+        
     }
 
     private void Update()
     {
-        
+        Vector3 diff = FindClosestEnemy().transform.position - transform.position;
+        float enemyDist = diff.sqrMagnitude;
+        Vector3 diff2 = FindAgent().transform.position - transform.position;
+        float playerDist = diff.sqrMagnitude;
+
+//        planner.CurrentWorldState = new WorldState(numTeleportTraps, enemyDist, playerDist, isHiding);
+        if (!planner.planning)
+        {
+            planner.MakePlan();
+        }
     }
 
 
-    /*
-    // Update is called once per frame
-    void Update () {
+    
+    // NOT USED. Obsolete
+    void primitiveAI() {
         if (!frozen)
         {
             Vector3 diff = FindClosestEnemy().transform.position - transform.position;
@@ -57,7 +69,7 @@ public class EnemyAgentController : MonoBehaviour {
             // print(agent.destination);
         }
     }
-    */
+    
 
     public void IncrementNumItems()
     {
@@ -254,5 +266,10 @@ public class EnemyAgentController : MonoBehaviour {
     public void GoToBestHidingSpot()
     {
         agent.destination = GetBestHidingSpot().transform.position;
+    }
+
+    public void Idle()
+    {
+        agent.destination = transform.position;
     }
 }
