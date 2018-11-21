@@ -13,6 +13,7 @@ public class EnemyAgentController : MonoBehaviour {
     public GameObject[] itemsRemaining;
     public GameObject[] hidingSpots;
     public NavMeshAgent agent;
+    public EnemyAgentPlanner planner;
     private bool frozen = false;
     
 	// Use this for initialization
@@ -26,8 +27,16 @@ public class EnemyAgentController : MonoBehaviour {
         }
         hidingSpots[10] = gameMgr.spawner.leftSpot;
         hidingSpots[11] = gameMgr.spawner.rightSpot;
+        planner = new EnemyAgentPlanner();
     }
 
+    private void Update()
+    {
+        
+    }
+
+
+    /*
     // Update is called once per frame
     void Update () {
         if (!frozen)
@@ -48,6 +57,7 @@ public class EnemyAgentController : MonoBehaviour {
             // print(agent.destination);
         }
     }
+    */
 
     public void IncrementNumItems()
     {
