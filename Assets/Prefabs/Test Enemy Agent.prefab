@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 65429453806933288}
   - component: {fileID: 114843884310236820}
   - component: {fileID: 195212692827795566}
+  - component: {fileID: 114605915225226368}
   m_Layer: 0
   m_Name: Test Enemy Agent
   m_TagString: EnemyAgent
@@ -114,6 +115,17 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114605915225226368
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1373382821073988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6079bbe5078b9cc428a0e909b1ab82e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114843884310236820
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -128,9 +140,12 @@ MonoBehaviour:
   gameMgr: {fileID: 0}
   isAlive: 1
   numTeleportTraps: 0
+  teleDistance: 150
+  isHiding: 1
   itemsRemaining: []
-  alcoves: []
+  hidingSpots: []
   agent: {fileID: 0}
+  planner: {fileID: 0}
 --- !u!195 &195212692827795566
 NavMeshAgent:
   m_ObjectHideFlags: 1

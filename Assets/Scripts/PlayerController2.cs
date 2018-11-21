@@ -63,8 +63,6 @@ public class PlayerController2 : MonoBehaviour {
         GameObject closestEnemy = FindClosestEnemy();
         GameObject closestAgent = FindAgent();
 
-        print("Closest enemy: " + closestEnemy);
-
         Vector3 diff = Vector3.zero;
 
         if (closestEnemy)
