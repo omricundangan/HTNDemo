@@ -16,27 +16,25 @@ public class EnemyAgentController : MonoBehaviour {
     public GameObject[] hidingSpots;
     public NavMeshAgent agent;
     public EnemyAgentPlanner planner;
-    private bool frozen = false;
     
 	// Use this for initialization
 	void Start () {
         agent = GetComponent<NavMeshAgent>();
         itemsRemaining = gameMgr.items;
         hidingSpots = new GameObject[12];
-        for(int i = 0; i < gameMgr.alcoves.Length; i++)
+        for(int i = 0; i < gameMgr.alcoves.Length; i++) // add all the alcoves to the hidingSpots
         {
             hidingSpots[i] = gameMgr.alcoves[i];
         }
         hidingSpots[10] = gameMgr.spawner.leftSpot;
         hidingSpots[11] = gameMgr.spawner.rightSpot;
         planner = GetComponent<EnemyAgentPlanner>();
-        
+        numTeleportTraps = 2;
     }
 
     private void Update()
     {
         UpdateWorldState();
-
         planner.MakePlan();
     }
 
@@ -44,7 +42,7 @@ public class EnemyAgentController : MonoBehaviour {
     {
         planner.CurrentWorldState.setNumTeleports(numTeleportTraps);
 
-        float playerDist = -1;
+        float playerDist = -1;  // Default -1 in case Player is removed from game.
 
         Vector3 diff = FindClosestEnemy().transform.position - transform.position;
         float enemyDist = diff.sqrMagnitude;
@@ -54,6 +52,7 @@ public class EnemyAgentController : MonoBehaviour {
             playerDist = diff2.sqrMagnitude;
         }
 
+        // Get Enemy and Player distances 
         if (playerDist < teleDistance && playerDist != -1)
         {
             planner.CurrentWorldState.setPlayerNear(true);
@@ -71,30 +70,14 @@ public class EnemyAgentController : MonoBehaviour {
             planner.CurrentWorldState.setEnemyNear(false);
         }
 
-        if(transform.position == GetBestHidingSpot().transform.position)
+        // Get position to see if in hiding spot. Do not include y because then the agent would have to be intersecting the floor
+        if(transform.position.x == GetBestHidingSpot().transform.position.x && transform.position.z == GetBestHidingSpot().transform.position.z)
         {
             planner.CurrentWorldState.isHidden = true;
         }
         else
         {
             planner.CurrentWorldState.isHidden = false;
-        }
-    }
-    
-    // NOT USED. Obsolete!!!
-    void primitiveAI() {
-        if (!frozen)
-        {
-            Vector3 diff = FindClosestEnemy().transform.position - transform.position;
-            float enemyDist = diff.sqrMagnitude;
-            if (enemyDist < 150)
-            {
-                GoToBestHidingSpot();
-            }
-            else
-            {
-                GoToClosestItem();
-            }
         }
     }
     
@@ -122,7 +105,6 @@ public class EnemyAgentController : MonoBehaviour {
             + new Vector3(0, 0.5f, 0));
     }
 
-    // public just for testing
     public void ActivateTeleportTrap()
     {
         numTeleportTraps--;
@@ -204,24 +186,6 @@ public class EnemyAgentController : MonoBehaviour {
         return closest;
     }
 
-    public GameObject GetClosestAlcove()
-    {
-        GameObject closest = null;
-        float distance = Mathf.Infinity;
-        Vector3 position = transform.position;
-        for (int i = 0; i < hidingSpots.Length; i++)
-        {
-            Vector3 diff = hidingSpots[i].transform.position - position;
-            float curDistance = diff.sqrMagnitude;
-            if (curDistance < distance)
-            {
-                closest = hidingSpots[i];
-                distance = curDistance;
-            }
-        }
-        return closest;
-    }
-
     public GameObject GetBestHidingSpot()
     {
         GameObject closest = null;
@@ -259,11 +223,6 @@ public class EnemyAgentController : MonoBehaviour {
         {
             return second;
         }
-    }
-
-    public void GoToClosestAlcove()
-    {
-        agent.destination = GetClosestAlcove().transform.position;
     }
 
     public void GoToClosestItem()

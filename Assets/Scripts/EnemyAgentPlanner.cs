@@ -16,10 +16,7 @@ public class EnemyAgentPlanner : MonoBehaviour {
     public Task taskAvoid;
     public Task taskGetItem;
 
-    public bool planning;
-
 	void Start () {
-        planning = false;
         ctrlr = GetComponent<EnemyAgentController>();
         TasksToProcess = new Stack<Task>();
         FinalPlan = new Stack<Task>();
@@ -33,7 +30,6 @@ public class EnemyAgentPlanner : MonoBehaviour {
         // Create HTN
         taskRoot = new Task(TASKS.RootTask, TYPE.Compound);
         taskUseTeleport = new Task(TASKS.Teleport, TYPE.Primitive);
- //      taskUseTeleport.effects = new WorldState(CurrentWorldState.numTeleports--, CurrentWorldState.enemyNear, CurrentWorldState.playerNear, CurrentWorldState.isHidden);
         taskAvoid = new Task(TASKS.Avoid, TYPE.Compound);
         taskIdle = new Task(TASKS.Idle, TYPE.Primitive);
         taskHide = new Task(TASKS.Hide, TYPE.Primitive);
@@ -75,8 +71,6 @@ public class EnemyAgentPlanner : MonoBehaviour {
                 Method SatisfiedMethod = CurrentTask.FindSatisfiedMethod(WorkingWS);
                 if (SatisfiedMethod != null)
                 {
-                    // RecordDecompositionOfTask(CurrentTask, FinalPlan, decompHistory);
-
                     Stack<Task> reverseStack = new Stack<Task>();
                     foreach (Task subTask in SatisfiedMethod.subTasks)
                     {
@@ -86,10 +80,6 @@ public class EnemyAgentPlanner : MonoBehaviour {
                     {
                         TasksToProcess.Push(reverseStack.Pop());
                     }
-                }
-                else
-                {
-                    // RestoreToLastDecomposedTask();
                 }
             }
             else // Primitive Task
@@ -101,13 +91,8 @@ public class EnemyAgentPlanner : MonoBehaviour {
                     }
                     FinalPlan.Push(CurrentTask);    // PushBack(CurrentTask) ??
                 }
-                else
-                {
-                    //RestoreToLastDecomposedTask();
-                }
             }
         }
-
         ExecutePlan();
     }
 
@@ -121,10 +106,7 @@ public class EnemyAgentPlanner : MonoBehaviour {
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
             case TASKS.Idle:
                 if(ws.enemyNear && ws.isHidden)
                 {
