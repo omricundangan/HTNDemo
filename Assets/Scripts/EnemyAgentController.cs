@@ -201,6 +201,10 @@ public class EnemyAgentController : MonoBehaviour {
                 second = closest;
                 closest = hidingSpots[i];
                 distance = curDistance;
+                if (i == 1)
+                {
+                    second = closest;
+                }
             }
         }
 

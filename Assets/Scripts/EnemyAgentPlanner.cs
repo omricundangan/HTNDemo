@@ -8,13 +8,7 @@ public class EnemyAgentPlanner : MonoBehaviour {
     public WorldState CurrentWorldState;
     public Stack<Task> TasksToProcess;
     public Stack<Task> FinalPlan;
-
-    public Task taskRoot;
-    public Task taskUseTeleport;
-    public Task taskIdle;
-    public Task taskHide;
-    public Task taskAvoid;
-    public Task taskGetItem;
+    public EnemyAgentHTN htn;
 
 	void Start () {
         ctrlr = GetComponent<EnemyAgentController>();
@@ -22,47 +16,13 @@ public class EnemyAgentPlanner : MonoBehaviour {
         FinalPlan = new Stack<Task>();
         CurrentWorldState = new WorldState(2, false, false, false);
 
-        CreateHTN();
+        htn = new EnemyAgentHTN();
 	}
-
-    void CreateHTN()
-    {
-        // Create HTN
-        taskRoot = new Task(TASKS.RootTask, TYPE.Compound);
-        taskUseTeleport = new Task(TASKS.Teleport, TYPE.Primitive);
-        taskAvoid = new Task(TASKS.Avoid, TYPE.Compound);
-        taskIdle = new Task(TASKS.Idle, TYPE.Primitive);
-        taskHide = new Task(TASKS.Hide, TYPE.Primitive);
-        taskGetItem = new Task(TASKS.GetItem, TYPE.Primitive);
-
-        // Construct the methods in the RootTask (BeEnemyAgent)
-        Method rootm0 = new Method(TASKS.RootTask, 0);
-        rootm0.subTasks.Add(taskUseTeleport);
-        Method rootm1 = new Method(TASKS.RootTask, 1);
-        rootm1.subTasks.Add(taskAvoid);
-        Method rootm2 = new Method(TASKS.RootTask, 2);
-        rootm2.subTasks.Add(taskGetItem);
-
-        // Add the methods to the methods in the Compound Task "BeEnemyAgent"
-        taskRoot.methods.Add(rootm0);
-        taskRoot.methods.Add(rootm1);
-        taskRoot.methods.Add(rootm2);
-
-        // Construct the methods in the Compound Task "Avoid"
-        Method avoidm0 = new Method(TASKS.Avoid, 0);
-        avoidm0.subTasks.Add(taskIdle);
-        Method avoidm1 = new Method(TASKS.Avoid, 1);
-        avoidm1.subTasks.Add(taskHide);
-
-        // Add the methods to the Compound Task
-        taskAvoid.methods.Add(avoidm0);
-        taskAvoid.methods.Add(avoidm1);
-    }
 
     public void MakePlan()
     {
         WorldState WorkingWS = CurrentWorldState;
-        TasksToProcess.Push(taskRoot);
+        TasksToProcess.Push(htn.taskRoot);
         while(TasksToProcess.Count != 0)
         {
             Task CurrentTask = TasksToProcess.Pop();
@@ -208,65 +168,6 @@ public class EnemyAgentPlanner : MonoBehaviour {
         }
         return false;
     }
-}
-
-public class Task
-{
-    public List<Method> methods = new List<Method>();   // null if primitive Task
-    public TASKS task;  // name of task
-    public TYPE type;   // type of task (primitive/compound)
-    public WorldState effects;  // the effects of this task, if any
-
-    public Task(TASKS ta, TYPE ty)
-    {
-        task = ta;
-        type = ty;
-    }
-
-    // Returns the Method in this Task that fulfills the preconditions in the worldstate, if any
-    public Method FindSatisfiedMethod(WorldState ws)
-    {
-        foreach (Method method in methods)
-        {
-            if (EnemyAgentPlanner.MethodConditionMet(method, ws))   // only true if a method satisfies the preconditions in the worldstate
-            {
-                return method;
-            }
-        }
-        return null;
-    }
-}
-
-// Compound Tasks contain Methods, which contain SubTasks
-public class Method
-{
-    public List<Task> subTasks = new List<Task>();  // methods hold subTasks that are either primtive or compound
-    public int methodNum;   // the number of this Method
-    public TASKS task;
-
-    public Method(TASKS t, int m)
-    {
-        task = t;
-        methodNum = m;
-    }
-}
-
-// List of tasks available
-public enum TASKS
-{
-    RootTask,
-    Teleport,
-    Avoid,
-    Hide,
-    GetItem,
-    Idle
-}
-
-// Type of Tasks available
-public enum TYPE
-{
-    Compound,
-    Primitive
 }
 
 public class WorldState
