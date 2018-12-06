@@ -6,3 +6,29 @@ The player plays against an AI-controlled Agent and controls the Blue circle, co
 
 ## Implementation
 The opposing Agent is controlled by a basic Hierarchical Task Network. Implementation was based off of [this section](http://www.gameaipro.com/GameAIPro/GameAIPro_Chapter12_Exploring_HTN_Planners_through_Example.pdf) in Game AI Pro. The implemented pseudocode described in the paper can be found in the [EnemyAgentPlanner class](https://github.com/dlrht/HTNDemo/blob/master/Assets/Scripts/EnemyAgentPlanner.cs) in the MakePlan() method.
+
+The Enemy Agent AI has a HTN Domain as follows:
+![HTN Domain](https://i.imgur.com/uFAtVfi.png)
+
+Compound Task [BeEnemyAgent]
+	Method [numTeleports > 0 && playerNear || enemyNear]
+		SubTasks [UseTeleport]
+	Method [enemyNear]
+		SubTasks [Avoid()]
+	Method [true]
+		SubTasks [GetItem]
+Compound Task [Avoid]
+	Method [isHidden == true]
+		SubTasks [Idle()]
+	Method [isHidden == false]
+		SubTasks [Hide()]
+Primitive Task [UseTeleport] 
+	Operator [ActivateTeleportTrap()]
+		Effects [numTeleports--]
+Primitive Task [Idle]
+	Operator [StayInPosition()]
+Primitive Task [Hide]
+	Operator [GoToBestHidingSpot()]
+Primitive Task [GetItem]
+	Operator [GoToClosestItem()]
+
