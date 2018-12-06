@@ -9,4 +9,4 @@ The opposing Agent is controlled by a basic Hierarchical Task Network. Implement
 
 The Enemy Agent AI has a HTN Domain as follows:
 
-![HTN Domain](https://i.imgur.com/uFAtVfi.png | width=100)
+![HTN Domain](https://i.imgur.com/uFAtVfi.png)
